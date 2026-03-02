@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2</title>
+    <style>
+        /* ChatGPT Minimalist Theme Variables */
+        :root {
+            --bg-main: #ffffff;
+            --bg-sec: #f7f7f8;
+            --text-main: #343541;
+            --text-sec: #6e6e80;
+            --accent: #10a37f;
+            --border: #e5e5e5;
+            --card-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Söhne', 'Segoe UI', Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            background: var(--bg-sec);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Sticky Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .nav-button {
+            padding: 8px 16px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-button:hover {
+            background-color: #0e906f;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-sec);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .tabs::-webkit-scrollbar { display: none; } /* Chrome */
+
+        .tab {
+            padding: 14px 20px;
+            cursor: pointer;
+            color: var(--text-sec);
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--text-main);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Content Area */
+        .content-container {
+            max-width: 800px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        .chapter-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .chapter-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards and Blocks */
+        .card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-title {
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .text-block {
+            margin-bottom: 16px;
+        }
+        .text-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .poem {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            border-left: 4px solid var(--accent);
+            padding-left: 16px;
+            margin-bottom: 16px;
+            background: #f0fdf9; /* very light accent bg */
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .meaning {
+            color: var(--text-main);
+        }
+
+        .shabdarth-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            background: #f9f9fa;
+            padding: 16px;
+            border-radius: 6px;
+        }
+        @media (min-width: 600px) {
+            .shabdarth-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .shabdarth-item {
+            display: flex;
+            gap: 8px;
+        }
+        .shabdarth-word {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .shabdarth-mean {
+            color: var(--text-sec);
+        }
+
+        .qa-item {
+            margin-bottom: 16px;
+        }
+        .qa-q {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .qa-options {
+            margin-left: 16px;
+            color: var(--text-sec);
+        }
+
+        /* Dual Language Logic */
+        .en {
+            display: none;
+            color: #2c3e50;
+        }
+        
+        body.show-hinglish .hi {
+            display: none;
+        }
+        
+        body.show-hinglish .en {
+            display: block;
+        }
+
+        /* Inline Dual Lang */
+        span.en { display: none; }
+        body.show-hinglish span.hi { display: none; }
+        body.show-hinglish span.en { display: inline; }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1 class="header-title">
+            <span class="hi">हिंदी साहित्य - भाग 2</span>
+            <span class="en">Hindi Sahitya - Part 2</span>
+        </h1>
+        <a href="index.html" class="nav-button">Go to Module 1</a>
+        <div class="toggle-container">
+            <span class="hi">हिंदी</span><span class="en">Hindi</span>
+            <label class="switch">
+                <input type="checkbox" id="langToggle" onchange="toggleLanguage()">
+                <span class="slider"></span>
+            </label>
+            <span>Hinglish</span>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('chap1', this)">
+            <span class="hi">1. कबीर के दोहे</span><span class="en">1. Kabir Ke Dohe</span>
+        </div>
+        <div class="tab" onclick="switchTab('chap2', this)">
+            <span class="hi">2. पुष्प की अभिलाषा</span><span class="en">2. Pushp Ki Abhilasha</span>
+        </div>
+        <div class="tab" onclick="switchTab('chap3', this)">
+            <span class="hi">3. एक वृक्ष की हत्या</span><span class="en">3. Ek Vriksh Ki Hatya</span>
+        </div>
+        <div class="tab" onclick="switchTab('chap4', this)">
+            <span class="hi">4. वृद्धाएँ धरती का नमक हैं</span><span class="en">4. Vriddhayein Dharti Ka Namak Hain</span>
+        </div>
+        <div class="tab" onclick="switchTab('chap5', this)">
+            <span class="hi">5. बच्चे काम पर जा रहे हैं</span><span class="en">5. Bachche Kaam Par Ja Rahe Hain</span>
+        </div>
+    </div>
+
+    <main class="content-container">
+
+        <!-- CHAPTER 1: KABIR KE DOHE -->
+        <section id="chap1" class="chapter-content active">
+            <div class="card">
+                <div class="hi">
+                    <p>कबीर के कई प्रसिद्ध दोहे हैं, जिनमें जीवन के महत्वपूर्ण सबक दिए गए हैं। उदाहरण के लिए, "बुरा जो देखन मैं चला, बुरा न मिलया कोय। जो मन खोजा आपना, तो मुझसे बुरा न कोय।" यह बताता है कि बुराई दूसरों में नहीं, बल्कि हमारे अपने मन में होती है। इसी तरह, "काल करे सो आज कर, आज करे सो अब। पल में प्रलय होएगी, बहुरि करेगा कब।" यह समय पर काम करने और टालमटोल से बचने की सीख देता है।</p>
+                </div>
+                <div class="en">
+                    <p>Kabir ke kai prasiddh dohe hain, jinmein jeevan ke mahatvapurna sabak diye gaye hain. Udaharan ke liye, "Bura jo dekhan main chala, bura na milaya koy. Jo man khoja aapna, to mujhse bura na koy." Yah batata hai ki burai doosron mein nahin, balki hamare apne man mein hoti hai. Isi tarah, "Kaal kare so aaj kar, aaj kare so ab. Pal mein pralay hoyegi, bahuri karega kab." Yah samay par kaam karne aur taalmatol se bachne ki seekh deta hai.</p>
+                </div>
+            </div>
+
+            <h2 class="card-title" style="margin-top: 32px;">
+                <span class="hi">कबीर के दोहे और उनके अर्थ</span>
+                <span class="en">Kabir Ke Dohe Aur Unke Arth (Kabir's Couplets & Meanings)</span>
+            </h2>
+
+            <!-- Doha 1 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"दुख में सुमिरन सब करे, सुख में करे न कोय।<br>जो सुख में सुमिरन करे, दुख काहे को होय।।"</div>
+                    <div class="en">"Dukh mein sumiran sab kare, sukh mein kare na koy.<br>Jo sukh mein sumiran kare, dukh kaahe ko hoy."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> जब सब लोग मुश्किल में भगवान को याद करते हैं, तो अगर कोई सुख में भी उन्हें याद करे, तो दुख क्यों होगा?</div>
+                    <div class="en"><strong>Arth:</strong> Jab sab log mushkil mein bhagwan ko yaad karte hain, to agar koi sukh mein bhi unhein yaad kare, to dukh kyon hoga?</div>
+                </div>
+            </div>
+
+            <!-- Doha 2 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"बुरा जो देखन मैं चला, बुरा न मिलया कोय।<br>जो मन खोजा आपना, तो मुझसे बुरा न कोय।।"</div>
+                    <div class="en">"Bura jo dekhan main chala, bura na milaya koy.<br>Jo man khoja aapna, to mujhse bura na koy."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> जब मैं दूसरों में बुराई खोजने निकला, तो मुझे कोई बुरा नहीं मिला। जब मैंने अपने मन में झाँका, तो पाया कि मुझसे बुरा कोई नहीं है। यह सिखाता है कि बुराई अक्सर हमारे अपने नजरिए में होती है।</div>
+                    <div class="en"><strong>Arth:</strong> Jab main doosron mein burai khojne nikla, to mujhe koi bura nahin mila. Jab maine apne man mein jhaanka, to paaya ki mujhse bura koi nahin hai. Yah sikhata hai ki burai aksar hamare apne najariye mein hoti hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 3 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"बड़ा हुआ तो क्या हुआ, जैसे पेड़ खजूर।<br>पंथी को छाया नहीं, फल लागे अति दूर।।"</div>
+                    <div class="en">"Bada hua to kya hua, jaise ped khajoor.<br>Panthi ko chhaya nahin, phal laage ati door."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> बड़ा होने से कोई फायदा नहीं है अगर वह दूसरों के काम न आए, ठीक वैसे ही जैसे खजूर का पेड़। वह न तो राहगीर को छाया देता है और न ही फल आसानी से लगने देता है।</div>
+                    <div class="en"><strong>Arth:</strong> Bada hone se koi fayda nahin hai agar vah doosron ke kaam na aaye, theek vaise hi jaise khajoor ka ped. Vah na to raahgeer ko chhaya deta hai aur na hi phal aasaani se lagne deta hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 4 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"धीरे-धीरे रे मना, धीरे सब-कुछ होए।<br>माली सींचे सौ घड़ा, ऋतु आए फल होए।।"</div>
+                    <div class="en">"Dheere-dheere re mana, dheere sab-kuchh hoye.<br>Maali seenche sau ghada, ritu aaye phal hoye."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> कबीर कहते हैं कि सब कुछ धीरे-धीरे ही होता है। माली चाहे सौ घड़े पानी डाल दे, पर फल तो ऋतु आने पर ही लगेगा। यह धैर्य और समय की महत्ता को दर्शाता है।</div>
+                    <div class="en"><strong>Arth:</strong> Kabir kahte hain ki sab kuchh dheere-dheere hi hota hai. Maali chahe sau ghade paani daal de, par phal to ritu aane par hi lagega. Yah dhairya aur samay ki mahatta ko darshata hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 5 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"जाति न पूछो साधु की, पूछ लीजिए ज्ञान।<br>मोल करो तलवार का, पड़ा रहन दो म्यान।।"</div>
+                    <div class="en">"Jaati na poochho saadhu ki, poochh lijiye gyaan.<br>Mol karo talvaar ka, pada rahan do myaan."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> किसी साधु से उसकी जाति नहीं, बल्कि उसके ज्ञान के बारे में पूछना चाहिए। क्योंकि तलवार का महत्व उसकी धार में होता है, न कि उसकी म्यान में।</div>
+                    <div class="en"><strong>Arth:</strong> Kisi saadhu se uski jaati nahin, balki uske gyaan ke baare mein poochhna chahiye. Kyonki talvaar ka mahatva uski dhaar mein hota hai, na ki uski myaan mein.</div>
+                </div>
+            </div>
+
+            <!-- Doha 6 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"काल करे सो आज कर, आज करे सो अब।<br>पल में प्रलय होएगी, बहुरि करेगा कब।।"</div>
+                    <div class="en">"Kaal kare so aaj kar, aaj kare so ab.<br>Pal mein pralay hoyegi, bahuri karega kab."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>अर्थः</strong> जो काम कल करना है, वह आज करो। जो आज करना है, वह अभी करो। अगले ही पल क्या होगा, कोई नहीं जानता, फिर वह काम कब करोगे?</div>
+                    <div class="en"><strong>Arth:</strong> Jo kaam kal karna hai, vah aaj karo. Jo aaj karna hai, vah abhi karo. Agle hi pal kya hoga, koi nahin jaanta, phir vah kaam kab karoge?</div>
+                </div>
+            </div>
+
+            <!-- Doha 7 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"चिंता ऐसी डाकिनी, काट कलेजा खाए।<br>वैद बिचारा क्या करे, कहां तक दवा लगाए।।"</div>
+                    <div class="en">"Chinta aisi daakini, kaat kaleja khaye.<br>Vaid bichara kya kare, kahan tak dava lagaye."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कबीर दास जी कहते हैं कि चिंता एक ऐसी डायन है जो व्यक्ति का कलेजा काट कर खा जाती है। इसका इलाज वैद्य नहीं कर सकता। वह कितनी दवा लगाएगा। अर्थात चिंता जैसी खतरनाक बीमारी का कोई इलाज नहीं है।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kabir Das ji kahte hain ki chinta ek aisi daayan hai jo vyakti ka kaleja kaat kar kha jaati hai. Iska ilaaj vaidya nahin kar sakta. Vah kitni dava lagayega. Arthaat chinta jaisi khatarnak beemari ka koi ilaaj nahin hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 8 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"कागा का को धन हरे, कोयल का को देय ।<br>मीठे वचन सुना के, जग अपना कर लेय ।।"</div>
+                    <div class="en">"Kaaga ka ko dhan hare, koyal ka ko dey.<br>Meethe vachan suna ke, jag apna kar ley."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कौआ किसी का धन नहीं चुराता, फिर भी कौआ लोगों को पसंद नहीं होता। वहीं कोयल किसी को धन नहीं देती, लेकिन सबको अच्छी लगती है। ये फ़र्क़ है बोली का, कोयल मीठी बोली से सबके मन को हर लेती है।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kaua kisi ka dhan nahin churata, phir bhi kaua logon ko pasand nahin hota. Vahin koyal kisi ko dhan nahin deti, lekin sabko achchhi lagti hai. Ye farq hai boli ka, koyal meethi boli se sabke man ko har leti hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 9 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"रुखा सूखा खाइकै, ठंडा पानी पीव।<br>देख विरानी चूपड़ी, मन ललचावै जीव ।।"</div>
+                    <div class="en">"Rukha sookha khaikai, thanda paani peev.<br>Dekh viraani choopadi, man lalchaavai jeev."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> ईश्वर ने जो कुछ भी दिया है, उसी में संतोष करना चाहिए। यदि ईश्वर ने रुखी सूखी दो रोटी दी है तो उसे ही खुशी से खाकर ठंडा पानी पीकर सो जाना चाहिए। दुसरो की घी की चुपड़ी रोटी देखकर मन नहीं ललचाना चाहिए।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Ishwar ne jo kuchh bhi diya hai, usi mein santosh karna chahiye. Yadi Ishwar ne rukhi sookhi do roti di hai to use hi khushi se khaakar thanda paani peekar so jaana chahiye. Doosro ki ghee ki chupadi roti dekhkar man nahin lalchana chahiye.</div>
+                </div>
+            </div>
+
+            <!-- Doha 10 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"पोथी पढ़ि पढ़ि जग मुआ, पंडित भया न कोय।<br>ढाई आखर प्रेम का, पढ़े सो पंडित होय ।।"</div>
+                    <div class="en">"Pothi padhi padhi jag mua, pandit bhaya na koy.<br>Dhaai aakhar prem ka, padhe so pandit hoy."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> बड़ी-बड़ी किताबें पढ़ कर संसार में कितने लोग मृत्यु के द्वार पहुंच गए, लेकिन सभी विद्वान न हो सके। कबीर मानते हैं कि यदि कोई प्रेम या प्यार के केवल ढाई अक्षर ही अच्छी तरह पढ़ ले, अर्थात प्यार का वास्तविक रूप पहचान ले तो वही सच्चा ज्ञानी होगा।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Badi-badi kitabein padh kar sansar mein kitne log mrityu ke dwar pahunch gaye, lekin sabhi vidwan na ho sake. Kabir maante hain ki yadi koi prem ya pyaar ke keval dhaai akshar hi achchhi tarah padh le, arthaat pyaar ka vaastavik roop pahchaan le to vahi sachcha gyaani hoga.</div>
+                </div>
+            </div>
+
+            <!-- Doha 11 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"जिहिं घर साधु न पूजिये, हरि की सेवा नांहि।<br>ते घर मरघट सारखे, भूत बसै तिन मांहि ।।"</div>
+                    <div class="en">"Jihin ghar saadhu na poojiye, hari ki seva naanhi.<br>Te ghar marghat saarakhe, bhoot basai tin maanhi."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कबीरदास कहते है कि जिस घर में ईश्वर की भक्ति और साधुओं का सम्मान नहीं होता है, वह घर मरघट के समान होता है, वहाँ भूतों का निवास ही रहता है। अर्थात प्रत्येक सदगृहस्थ को अपने घर में साधुओं की सेवा और ईश्वर की भक्ति करनी चाहिये।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kabirdas kahte hai ki jis ghar mein Ishwar ki bhakti aur saadhuon ka sammaan nahin hota hai, vah ghar marghat ke samaan hota hai, vahaan bhooton ka nivaas hi rahta hai. Arthaat pratyek sadgrihasth ko apne ghar mein saadhuon ki seva aur Ishwar ki bhakti karni chahiye.</div>
+                </div>
+            </div>
+
+            <!-- Doha 12 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"पानी केरा बुदबुदा, अस मानस की जात।<br>देखत ही छुप जाएगा है, ज्यों सारा परभात ।।"</div>
+                    <div class="en">"Paani kera budbuda, as maanas ki jaat.<br>Dekhat hi chhup jaayega hai, jyon saara parbhaat."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कबीर दास जी कहते हैं कि इंसान की इच्छाएं एक पानी के बुलबुले के समान हैं जो पल भर में बनती हैं और पल भर में खत्म। जिस दिन आपको सच्चे गुरु के दर्शन होंगे उस दिन ये सब मोह माया और सारा अंधकार छिप जायेगा।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kabir Das ji kahte hain ki insaan ki ichchhaayein ek paani ke bulbule ke samaan hain jo pal bhar mein banti hain aur pal bhar mein khatm. Jis din aapko sachche guru ke darshan honge us din ye sab moh maaya aur saara andhkaar chhip jaayega.</div>
+                </div>
+            </div>
+
+            <!-- Doha 13 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"चाह गई चिंता मिटी, मनुवा बेपरवाह।<br>जिनको कछु न चाहिए, सो जग साहन साह।।"</div>
+                    <div class="en">"Chaah gayi chinta miti, manuwa beparvah.<br>Jinko kachhu na chahiye, so jag saahan saah."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कबीरदास कहते है कि यदि मनुष्य सुख चाहता है, अपनी चिंताए मिटाना चाहता है तो उसे अपनी इच्छाओं को समाप्त कर देना चाहिए। क्योंकि इच्छाएं समाप्त होने से मन की समस्त चिंताए समाप्त हो जाती है और उसका मन मस्त हो जाता है तथा उसको किसी बात की परवाह नहीं होती है। जिसे इस संसार में किसी वस्तु इच्छा नहीं होती है वही संसार के शाहो का शाह है।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kabirdas kahte hai ki yadi manushya sukh chahta hai, apni chintaayein mitaana chahta hai to use apni ichchhaayon ko samaapt kar dena chahiye. Kyonki ichchhaayein samaapt hone se man ki samast chintaayein samaapt ho jaati hai aur uska man mast ho jaata hai tatha usko kisi baat ki parvah nahin hoti hai. Jise is sansar mein kisi vastu ichchha nahin hoti hai vahi sansar ke shaaho ka shaah hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 14 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"'कबीर' संगत साधु की, हरै और की व्याधि।<br>संगत बुरी असाधु की, करै और ही व्याधि।।"</div>
+                    <div class="en">"'Kabir' sangat saadhu ki, harai aur ki vyaadhi.<br>Sangat buri asaadhu ki, karai aur hi vyaadhi."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> कबीरदास कहते है कि साधु की संगत सभी प्रकार की व्याधि को हरने वाली होती है जबकि असाधु की संगत व्याधि को बढ़ाने वाली होती है। अर्थात सज्जन व्यक्ति की संगत से जीवन सरल हो जाता है तथा दुर्जन व्यक्ति की संगत से जीवन और मुश्किल हो जाता है।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Kabirdas kahte hai ki saadhu ki sangat sabhi prakaar ki vyaadhi ko harne vaali hoti hai jabki asaadhu ki sangat vyaadhi ko badhane vaali hoti hai. Arthaat sajjan vyakti ki sangat se jeevan saral ho jaata hai tatha durjan vyakti ki sangat se jeevan aur mushkil ho jaata hai.</div>
+                </div>
+            </div>
+
+            <!-- Doha 15 -->
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">"तन को जोगी सब करें, मन को बिरला कोई।<br>सब सि‌द्धि सहजे पाइए, जे मन जोगी होइ ।।"</div>
+                    <div class="en">"Tan ko jogi sab karein, man ko birala koi.<br>Sab siddhi sahaje paaiye, je man jogi hoi."</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi"><strong>भावार्थ:-</strong> शरीर में भगवे वस्त्र धारण करना सरल है, पर मन को योगी बनाना बिरले ही व्यक्तियों का काम है। यदि मन योगी हो जाए तो सारी सि‌द्धियां सहज ही प्राप्त हो जाती हैं।</div>
+                    <div class="en"><strong>Bhavarth:-</strong> Shareer mein bhagve vastra dhaaran karna saral hai, par man ko yogi banana birale hi vyaktiyon ka kaam hai. Yadi man yogi ho jaye to saari siddhiyan sahaj hi praapt ho jaati hain.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: PUSHP KI ABHILASHA -->
+        <section id="chap2" class="chapter-content">
+            <h2 class="card-title"><span class="hi">पुष्प की अभिलाषा - माखनलाल चतुर्वेदी</span><span class="en">Pushp Ki Abhilasha - Makhanlal Chaturvedi</span></h2>
+            
+            <div class="card">
+                <div class="poem" style="text-align: center;">
+                    <div class="hi">
+                        चाह नहीं मैं सुरबाला के गहनों में गूँथा जांऊँ,<br><br>
+                        चाह नहीं प्रेमीमाला में बिंध प्यारी को ललचाऊँ,<br><br>
+                        चाह नहीं सम्राटों के शव पर हे हरि! डाला जाऊँ,<br><br>
+                        चाह नहीं देवों के सिर पर चढूँ भाग्य पर इठलाऊँ,<br><br>
+                        मुझे तोड़ लेना वनमाली<br>
+                        देना उस पथ पर फेंक ।<br><br>
+                        मातृभूमि पर सीस चढ़ाने<br>
+                        जिस पथ जाएँ वीर अनेक ।।
+                    </div>
+                    <div class="en">
+                        Chaah nahin main surbala ke gahnon mein goontha jaun,<br><br>
+                        Chaah nahin premimaala mein bindh pyaari ko lalchaun,<br><br>
+                        Chaah nahin samraaton ke shav par he Hari! daala jaun,<br><br>
+                        Chaah nahin devon ke sir par chadhun bhagya par ithlaun,<br><br>
+                        Mujhe tod lena vanmaali<br>
+                        Dena us path par phenk .<br><br>
+                        Matribhoomi par sees chadhane<br>
+                        Jis path jaayein veer anek ..
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><span class="hi">शब्दार्थ</span><span class="en">Shabdarth (Word Meanings)</span></h3>
+                <div class="shabdarth-grid">
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">चाह</span><span class="en">Chaah</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">इच्छा</span><span class="en">Ichchha (Desire)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">सुरबाला</span><span class="en">Surbala</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">देवकन्या</span><span class="en">Devkanya (Nymph/Divine Maiden)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">ललचाना</span><span class="en">Lalchana</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">प्रलोभित करना</span><span class="en">Pralobhit karna (To tempt)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">इठलाना</span><span class="en">Ithlana</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">गर्व करना</span><span class="en">Garv karna (To feel proud)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">सीस</span><span class="en">Sees</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">सिर</span><span class="en">Sir (Head)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">वनमाली</span><span class="en">Vanmaali</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">भगवान, बाग का माली</span><span class="en">Bhagwan, baag ka maali (God, Gardener)</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><span class="hi">भावबोध</span><span class="en">Bhavbodh (Meaning)</span></h3>
+                <div class="text-block">
+                    <div class="hi">फूल संसार में सबसे सुंदर और प्रिय वस्तु है। उसे देवकन्याएँ अपने को सजाने के लिए इस्तेमाल करती हैं। वह वर-वधू के प्रेम की निशानी के रूप में वरमाला बनता है। राजा - सम्राटों के शव पर चढ़ाया जाता है। देवताओं के सिर पर फूल शोभा पाता है। ये सब बड़े-बड़े लोग हैं। लेकिन फूल की इच्छा है कि वह मातृभूमि के लिए अपने प्राण देने वाले सैनिकों के पैरों के नीचे पड़ा रहे। अर्थात् वह मातृभूमि के भक्तों को सबसे ज्यादा चाहता है।</div>
+                    <div class="en">Phool sansar mein sabse sundar aur priya vastu hai. Use devkanyayein apne ko sajaane ke liye istemaal karti hain. Vah var-vadhu ke prem ki nishaani ke roop mein varmaala banta hai. Raja - samraaton ke shav par chadhaya jaata hai. Devtaon ke sir par phool shobha paata hai. Ye sab bade-bade log hain. Lekin phool ki ichchha hai ki vah matribhoomi ke liye apne praan dene vaale sainikon ke pairon ke neeche pada rahe. Arthaat vah matribhoomi ke bhakton ko sabse jyada chahta hai.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><span class="hi">अनुशीलनी (प्रश्न-उत्तर)</span><span class="en">Anusheelani (Q & A)</span></h3>
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">1. (क) पुष्प की क्या अभिलाषा नहीं है ?</span>
+                        <span class="en">1. (k) Pushp ki kya abhilasha nahin hai?</span>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">(ख) पुष्प वनमाली से क्या कहता है ?</span>
+                        <span class="en">(kh) Pushp vanmaali se kya kahta hai?</span>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">2. (क) क्या पुष्प देवकन्या के गहने में गूँथा जाना चाहता है ?</span>
+                        <span class="en">2. (k) Kya pushp devkanya ke gahne mein goontha jaana chahta hai?</span>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">(ख) फूल का देवताओं के सिर पर चढ़ना कैसी बात है ?</span>
+                        <span class="en">(kh) Phool ka devtaon ke sir par chadhna kaisi baat hai?</span>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">(ग) 'सैनिक सीस चढ़ाते हैं' का क्या मतलब है ?</span>
+                        <span class="en">(g) 'Sainik sees chadhate hain' ka kya matlab hai?</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: EK VRIKSH KI HATYA -->
+        <section id="chap3" class="chapter-content">
+            <h2 class="card-title"><span class="hi">एक वृक्ष की हत्या - कुँवर नारायण</span><span class="en">Ek Vriksh Ki Hatya - Kunwar Narayan</span></h2>
+            
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">अबकी घर लौटा तो देखा वह नहीं था-<br>वही बूढ़ा चौकीदार वृक्ष<br>जो हमेशा मिलता था घर के दरवाज़े पर तैनात ।</div>
+                    <div class="en">Abki ghar lauta to dekha vah nahin tha-<br>vahi boodha chaukidaar vriksh<br>jo hamesha milta tha ghar ke darwaze par tainaat .</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">कवि कहता है कि जब वह प्रदेश से घर लौटा तो अपने घर के सामने वाले पुराने पेड़ को न देखकर सोच में पड़ गया कि आखिर वह पेड़ गया कहाँ ? क्योंकि जब कभी घर आता था तो उस पेड़ को चौकीदार की तरह तैनात पाता था।</div>
+                    <div class="en">Kavi kahta hai ki jab vah pradesh se ghar lauta to apne ghar ke saamne vaale purane ped ko na dekhkar soch mein pad gaya ki aakhir vah ped gaya kahan ? Kyonki jab kabhi ghar aata tha to us ped ko chaukidaar ki tarah tainaat paata tha.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">पुराने चमड़े का बना उसका शरीर<br>वही सख़्त जान<br>झुर्रियोंदार खुरदुरा तना मैला-कुचैला,<br>राइफ़िल-सी एक सूखी डाल,<br>एक पगड़ी फूल पत्तीदार,<br>पाँवों में फटा-पुराना जूता<br>चरमराता लेकिन अक्खड़ बल-बूता</div>
+                    <div class="en">Purane chamde ka bana uska shareer<br>vahi sakht jaan<br>jhurriyondar khurdura tana maila-kuchaila,<br>rifle-si ek sookhi daal,<br>ek pagadi phool pattidaar,<br>paanvon mein phata-purana joota<br>charmaraata lekin akkhad bal-boota</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">वह पेड़ अधिक दिनों के होने के कारण अपना हरापन खो चूका था। डालें सूख गई थीं, पत्ती झड़ गये थे। लेकिन पेड़ का उपरी भाग फूल-पत्ती से युक्त था जो पगड़ी के समान प्रतित हो रहा था। पेड़ पुराना होने के कारण उसका तना खुरदुरा था। हर विषम परिस्थितियों में वह पेड़ निर्भीक होकर बहादुर के समान वहाँ खड़ा रहता था।</div>
+                    <div class="en">Vah ped adhik dinon ke hone ke kaaran apna harapan kho chooka tha. Daalein sookh gayi theen, patti jhad gaye the. Lekin ped ka upari bhaag phool-patti se yukt tha jo pagadi ke samaan pratit ho raha tha. Ped purana hone ke kaaran uska tana khurdura tha. Har visham paristhitiyon mein vah ped nirbheek hokar bahadur ke samaan vahaan khada rahta tha.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">धूप में बारिश में<br>गर्मी में सर्दी में<br>हमेशा चौकन्ना<br>अपनी ख़ाकी वर्दी में</div>
+                    <div class="en">Dhoop mein baarish mein<br>garmi mein sardi mein<br>hamesha chaukanna<br>apni khaaki vardi mein</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">कवि कहता है कि वह बुढ़ा वृक्ष गर्मी, सर्दी तथा बरसात में हमेशा चौकीदार की तरह खाकी वर्दी में अर्थात् छाल नष्ट होने के कारण हल्के-पीले रंग का दिखाई पड़ता था।</div>
+                    <div class="en">Kavi kahta hai ki vah budha vriksh garmi, sardi tatha barsaat mein hamesha chaukidaar ki tarah khaaki vardi mein arthaat chhaal nasht hone ke kaaran halke-peele rang ka dikhayi padta tha.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">दूर से ही ललकारता, “कौन?”<br>मैं जवाब देता, "दोस्त!"<br>और पल भर को बैठ जाता<br>उसकी ठंडी छाँव में<br>दरअसल, शुरू से ही था हमारे अंदेशों में<br>कहीं एक जानी दुश्मन</div>
+                    <div class="en">Door se hi lalkaarta, “Kaun?”<br>Main jawab deta, "Dost!"<br>Aur pal bhar ko baith jaata<br>uski thandi chhaanv mein<br>Darasal, shuru se hi tha hamare andeshon mein<br>kahin ek jaani dushman</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">कवि कहता है कि जब वह पेड़ के समीप पहुँचता था कि दूर से ही वह चौकिदार के समान सावधान करता था। तात्पर्य यह कि जैसे चौकिदार आनेवालों से जानकारी लेने के लिए पूछता है, वैसे ही वह पेड़ कवि से जानना चाहता है तब कवि अपने को उसका दोस्त कहते हुए उस पेड़ की शीतल छाया में बैठकर सोचने लगता है कि कहीं संवेदनहीन मानव स्वार्थपूर्ति के लिए इसे काट न दें।</div>
+                    <div class="en">Kavi kahta hai ki jab vah ped ke sameep pahunchta tha ki door se hi vah chaukidaar ke samaan saavdhan karta tha. Taatparya yah ki jaise chaukidaar aanevaalon se jaankari lene ke liye poochhta hai, vaise hi vah ped kavi se jaanna chahta hai tab kavi apne ko uska dost kahte hue us ped ki sheetal chhaya mein baithkar sochne lagta hai ki kahin samvedanheen maanav swaarthpoorti ke liye ise kaat na dein.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">कि घर को बचाना है लुटेरों से<br>शहर को बचाना है नादिरों से<br>देश को बचाना है देश के दुश्मनों से</div>
+                    <div class="en">Ki ghar ko bachana hai luteron se<br>shahar ko bachana hai nadiron se<br>desh ko bachana hai desh ke dushmanon se</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">कवि कहता है कि घर को बचाना है लुटेरों से, शहर को बचाना होगा हत्यारा से तथा देश को बचाना होगा देश के दुश्मनों से अर्थात् घर, शहर तथा देश तभी सुरक्षित रहेंगें, जब वृक्षों की रक्षा होगी।</div>
+                    <div class="en">Kavi kahta hai ki ghar ko bachana hai luteron se, shahar ko bachana hoga hatyaara se tatha desh ko bachana hoga desh ke dushmanon se arthaat ghar, shahar tatha desh tabhi surakshit rahenge, jab vrikshon ki raksha hogi.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">बचाना है-<br>नदियों को नाला हो जाने से<br>हवा को धुआँ हो जाने से<br>खाने को ज़हर हो जाने से :<br>बचाना है-जंगल को मरुस्थल हो जाने से,<br>बचाना है-मनुष्य को जंगल हो जाने से।</div>
+                    <div class="en">Bachana hai-<br>nadiyon ko naala ho jaane se<br>hawa ko dhuan ho jaane se<br>khaane ko zahar ho jaane se :<br>bachana hai-jangal ko marusthal ho jaane se,<br>bachana hai-manushya ko jangal ho jaane se.</div>
+                </div>
+                <div class="meaning">
+                    <div class="hi">कवि आगे कहता है कि नदियों को नाला बनने से, हवा को धुँआ बनने से तथा खाने को जहर बनने से बचाना होगा। इतना हि नहीं जंगल को मरूस्थल तथा मनुष्य को जंगल हो जाने से बचाना होगा। तात्पर्य यह कि पेड़-पौधों की रक्षा नहीं किया जायेगा तो मानव सभ्यता नहीं बचेगा। इसलिए हम सब किसी मिलकर पर्यावरण को बचाना होगा।</div>
+                    <div class="en">Kavi aage kahta hai ki nadiyon ko naala banne se, hawa ko dhuan banne se tatha khaane ko zahar banne se bachana hoga. Itna hi nahin jangal ko marusthal tatha manushya ko jangal ho jaane se bachana hoga. Taatparya yah ki ped-paudhon ki raksha nahin kiya jaayega to maanav sabhyata nahin bachega. Isliye hum sab kisi milkar paryavaran ko bachana hoga.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: VRIDDHAYEIN DHARTI KA NAMAK HAIN -->
+        <section id="chap4" class="chapter-content">
+            <h2 class="card-title"><span class="hi">वृद्धाएँ धरती का नमक हैं - अनामिका</span><span class="en">Vriddhayein Dharti Ka Namak Hain - Anamika</span></h2>
+            
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">
+                        'कपड़ा है देह', ... 'जीर्णाणि वस्त्राणि' ...वाला<br>
+                        यह श्लोक 'गीता' का, सुना था कभी बहुत बचपन में<br>
+                        पापा के पेट पर<br>
+                        पट्ट लेटे-लेटे !<br><br>
+                        संदर्भ यह है कि<br>
+                        दादाजी गुज़र गए थे,<br>
+                        रो रहे थे पापा धीरे-धीरे<br>
+                        और हल्की हिचकियों से<br>
+                        हिल जाता था जो कभी पेट उनका,<br>
+                        मुझको हिचकोले का आनंद आता था,<br>
+                        हालाँकि डरी हुई थी मैं यों सबके एकाएक रो पड़ने से,<br>
+                        बहुत चकित थी कि जो कभी नहीं रोते थे,<br>
+                        केवल रुलाते थे,<br>
+                        वे सब भी आज रो रहे हैं बुक्का फाड़े,<br><br>
+                        डरी हुई-सहमी हुई थी-<br>
+                        तभी तो यों चिपकी थी पापा से<br>
+                        पसीने से तर उनके बनियान की तरह<br>
+                        जो शायद फटी भी हुई थी。<br><br>
+                        समझा रहा था कोई उनको-<br>
+                        'क्यों रो रहे हो कि<br>
+                        यह देह कपड़ा है,<br>
+                        फटा हुआ कपड़ा बदल देती है आत्मा तो<br>
+                        इसमें रोना क्या, धोना क्या!'
+                    </div>
+                    <div class="en">
+                        'Kapda hai deh', ... 'jeernani vastrani' ...vala<br>
+                        yah shlok 'Geeta' ka, suna tha kabhi bahut bachpan mein<br>
+                        papa ke pet par<br>
+                        patt lete-lete !<br><br>
+                        Sandarbh yah hai ki<br>
+                        dadaji guzar gaye the,<br>
+                        ro rahe the papa dheere-dheere<br>
+                        aur halki hichkiyon se<br>
+                        hil jaata tha jo kabhi pet unka,<br>
+                        mujhko hichkole ka anand aata tha,<br>
+                        haalanki dari hui thi main yon sabke ekaek ro padne se,<br>
+                        bahut chakit thi ki jo kabhi nahin rote the,<br>
+                        keval rulate the,<br>
+                        ve sab bhi aaj ro rahe hain bukka phaade,<br><br>
+                        Dari hui-sahami hui thi-<br>
+                        tabhi to yon chipki thi papa se<br>
+                        paseene se tar unke baniyaan ki tarah<br>
+                        jo shaayad phati bhi hui thi.<br><br>
+                        Samjha raha tha koi unko-<br>
+                        'kyon ro rahe ho ki<br>
+                        yah deh kapda hai,<br>
+                        phata hua kapda badal deti hai aatma to<br>
+                        ismein rona kya, dhona kya!'
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">
+                        मैं क्या समझी, क्या नहीं समझी-<br>
+                        अब कुछ भी याद नहीं,<br>
+                        अब बस इतना जानती हूँ 'जीर्णाणि वस्त्राणि' के नाम पर-<br>
+                        कपड़े जब तार-तार होने लगते हैं,<br>
+                        बढ़ जाती है उनकी उपयोगिता !<br>
+                        फटे हुए बनियान बन जाते हैं झाड़न<br>
+                        और पुराने तौलिए पोंछे का कपड़ा。<br>
+                        फटी हुई साड़ियाँ दुपट्टे बन जाती हैं,<br>
+                        बन जाती हैं बच्चों की फलिया。<br>
+                        धोती के कोरों का अच्छा बनता है इजारबंद,<br>
+                        कहीं न कहीं सबसे मिल जाता है उनका तार-छंद<br>
+                        जो फटकर तार-तार हो जाते हैं-<br>
+                        सार्वजनिक बन जाती है जिनकी निजता !<br><br>
+                        वृद्धाएँ धरती का नमक हैं,<br>
+                        किसी ने कहा था !<br>
+                        जो घर में हो कोई वृद्धा-<br>
+                        खाना ज़्यादा अच्छा पकता है,<br>
+                        परदे-पेटीकोट और पायजामे भी दर्जी और रफूगरों के<br>
+                        मुहताज नहीं रहते,<br>
+                        सजा-धजा रहता है घर का हर कमरा,<br>
+                        बच्चे ज़्यादा अच्छा पलते हैं,<br>
+                        उनकी नन्ही-मुन्नी उल्टियाँ सँभालती<br>
+                        जगती हैं वे रात-भर,
+                    </div>
+                    <div class="en">
+                        Main kya samjhi, kya nahin samjhi-<br>
+                        ab kuchh bhi yaad nahin,<br>
+                        ab bas itna jaanti hoon 'jeernani vastrani' ke naam par-<br>
+                        kapde jab taar-taar hone lagte hain,<br>
+                        badh jaati hai unki upyogita !<br>
+                        Phate hue baniyaan ban jaate hain jhaadan<br>
+                        aur purane tauliye ponchhe ka kapda.<br>
+                        Phati hui saadiyan dupatte ban jaati hain,<br>
+                        ban jaati hain bachchon ki phaliya.<br>
+                        Dhoti ke koron ka achchha banta hai ijaarband,<br>
+                        kahin na kahin sabse mil jaata hai unka taar-chhand<br>
+                        jo phatkar taar-taar ho jaate hain-<br>
+                        saarvajanik ban jaati hai jinki nijata !<br><br>
+                        Vriddhayein dharti ka namak hain,<br>
+                        kisi ne kaha tha !<br>
+                        Jo ghar mein ho koi vriddha-<br>
+                        khaana zyada achchha pakta hai,<br>
+                        parde-petticoat aur pyajame bhi darji aur rafoogaron ke<br>
+                        muhtaaj nahin rahte,<br>
+                        saja-dhaja rahta hai ghar ka har kamra,<br>
+                        bachche zyada achchha palte hain,<br>
+                        unki nanhi-munni ultiyan sambhalti<br>
+                        jagti hain ve raat-bhar,
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">
+                        उनके ही संग-साथ से भाषा में बच्चों की<br>
+                        आ जाती है एक अजब कौंध<br>
+                        मुहावरों, मिथकों, लोकोक्तियों,<br>
+                        लोकगीतों, लोकगाथाओं और कथा-समयकों की。<br>
+                        उनके ही दम से<br>
+                        अतल कूप खुद जाते हैं बच्चों के मन में<br>
+                        आदिम स्मृतियों के。<br>
+                        घुल जाती हैं बच्चों के सपनों में<br>
+                        हिमालय-विमालय की अतल कंदराओं की<br>
+                        दिव्यवर्णी-दिव्यगंधी जड़ी-बूटियाँ और फूल-चूल!<br><br>
+                        रहती हैं वृद्धाएँ, घर में रहती हैं<br>
+                        लेकिन ऐसे जैसे अपने होने की ख़ातिर हों क्षमाप्रार्थी<br>
+                        - लोगों के आते ही बैठक से उठ जातीं।
+                    </div>
+                    <div class="en">
+                        Unke hi sang-saath se bhasha mein bachchon ki<br>
+                        aa jaati hai ek ajab kaundh<br>
+                        muhavaron, mithakon, lokoktiyon,<br>
+                        lokgeeton, lokgathaon aur katha-samayakon ki.<br>
+                        Unke hi dam se<br>
+                        atal koop khud jaate hain bachchon ke man mein<br>
+                        aadim smritiyon ke.<br>
+                        Ghul jaati hain bachchon ke sapanon mein<br>
+                        Himalay-vimalay ki atal kandaraon ki<br>
+                        divyavarni-divyagandhi jadi-bootiyan aur phool-chool!<br><br>
+                        Rahti hain vriddhayein, ghar mein rahti hain<br>
+                        lekin aise jaise apne hone ki khaatir hon kshamaprarthi<br>
+                        - logon ke aate hi baithak se uth jaateen.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: BACHCHE KAAM PAR JA RAHE HAIN -->
+        <section id="chap5" class="chapter-content">
+            <h2 class="card-title"><span class="hi">बच्चे काम पर जा रहे हैं - राजेश जोशी</span><span class="en">Bachche Kaam Par Ja Rahe Hain - Rajesh Joshi</span></h2>
+            
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">
+                        कोहरे से ढँकी सड़क पर बच्चे काम पर जा रहे हैं<br>
+                        हमारे समय की सबसे भयानक पंक्ति<br>
+                        सुबह सुबह<br>
+                        बच्चे काम पर जा रहे<br><br>
+                        भयानक है इसे विवरण की तरह लिखा जाना<br>
+                        लिखा जाना चाहिए इसे सवाल की तरह<br>
+                        काम पर क्यों जा रहे हैं बच्चे ?<br><br>
+                        क्या अंतरिक्ष में गिर गई हैं सारी गेंदें<br>
+                        क्या दीमकों ने खा लिया है<br>
+                        सारी रंग बिरंगी किताबों को<br>
+                        क्या काले पहाड़ के नीचे दब गए हैं सारे खिलौने<br>
+                        क्या किसी भूकंप में ढह गई हैं<br>
+                        सारे मदरसों की इमारतें<br>
+                        क्या सारे मैदान, सारे बगीचे और घरों के आँगन<br>
+                        खत्म हो गए हैं एकाएक
+                    </div>
+                    <div class="en">
+                        Kohre se dhanki sadak par bachche kaam par ja rahe hain<br>
+                        hamare samay ki sabse bhayanak pankti<br>
+                        subah subah<br>
+                        bachche kaam par ja rahe<br><br>
+                        bhayanak hai ise vivaran ki tarah likha jaana<br>
+                        likha jaana chahiye ise sawaal ki tarah<br>
+                        kaam par kyon ja rahe hain bachche ?<br><br>
+                        kya antariksh mein gir gayi hain saari gendein<br>
+                        kya deemakon ne kha liya hai<br>
+                        saari rang birangi kitabon ko<br>
+                        kya kale pahad ke neeche dab gaye hain saare khilaune<br>
+                        kya kisi bhookamp mein dhah gayi hain<br>
+                        saare madarson ki imaratein<br>
+                        kya saare maidaan, saare bageeche aur gharon ke aangan<br>
+                        khatm ho gaye hain ekayek
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="poem">
+                    <div class="hi">
+                        तो फिर बचा ही क्या है इस दुनिया में?<br>
+                        कितना भयानक होता अगर ऐसा होता<br>
+                        भयानक है लेकिन इससे भी ज़्यादा यह<br>
+                        कि हैं सारी चीजें हस्बमामूल<br><br>
+                        पर दुनिया की हजारों सड़कों से गुजरते हुए<br>
+                        बच्चे, बहुत छोटे छोटे बच्चे<br>
+                        काम पर जा रहे हैं।
+                    </div>
+                    <div class="en">
+                        To phir bacha hi kya hai is duniya mein?<br>
+                        kitna bhayanak hota agar aisa hota<br>
+                        bhayanak hai lekin isse bhi zyada yah<br>
+                        ki hain saari cheezein hasbamamool<br><br>
+                        par duniya ki hazaron sadkon se guzarte hue<br>
+                        bachche, bahut chhotey chhotey bachche<br>
+                        kaam par ja rahe hain.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><span class="hi">प्रश्न-अभ्यास</span><span class="en">Prashn-Abhyas (Q & A)</span></h3>
+                
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">1. कविता की पहली दो पक्तियों को पढ़ने तथा विचार करने से आपके मन-मस्तिष्क में जो चित्र उभरता है उसे लिखकर व्यक्त कीजिए।</span>
+                        <span class="en">1. Kavita ki pahli do panktiyon ko padhne tatha vichaar karne se aapke man-mastishk mein jo chitra ubharta hai use likhkar vyakt kijiye.</span>
+                    </div>
+                </div>
+                
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">2. कवि का मानना है कि बच्चों के काम पर जाने की भयानक बात को विवरण की तरह न लिखकर सवाल के रूप में पूछा जाना चाहिए कि 'काम पर क्यों जा रहे हैं बच्चे?' कवि की दृष्टि में उसे प्रश्न के रूप में क्यों पूछा जाना चाहिए?</span>
+                        <span class="en">2. Kavi ka manna hai ki bachchon ke kaam par jaane ki bhayanak baat ko vivaran ki tarah na likhkar sawaal ke roop mein poochha jaana chahiye ki 'kaam par kyon ja rahe hain bachche?' Kavi ki drishti mein use prashn ke roop mein kyon poochha jaana chahiye?</span>
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">3. सुविधा और मनोरंजन के उपकरणों से बच्चे वंचित क्यों हैं?</span>
+                        <span class="en">3. Suvidha aur manoranjan ke upkaranon se bachche vanchit kyon hain?</span>
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">4. दिन-प्रतिदिन के जीवन में हर कोई बच्चों को काम पर जाते देख रहा/ रही है, फिर भी किसी को कुछ अटपटा नहीं लगता। इस उदासीनता के क्या कारण हो सकते हैं?</span>
+                        <span class="en">4. Din-pratidin ke jeevan mein har koi bachchon ko kaam par jaate dekh raha/ rahi hai, phir bhi kisi ko kuchh atpata nahin lagta. Is udaseenata ke kya kaaran ho sakte hain?</span>
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">5. आपने अपने शहर में बच्चों को कब-कब और कहाँ-कहाँ काम करते हुए देखा है?</span>
+                        <span class="en">5. Aapne apne shahar mein bachchon ko kab-kab aur kahan-kahan kaam karte hue dekha hai?</span>
+                    </div>
+                </div>
+
+                <div class="qa-item">
+                    <div class="qa-q">
+                        <span class="hi">6. बच्चों का काम पर जाना धरती के एक बड़े हादसे के समान क्यों है?</span>
+                        <span class="en">6. Bachchon ka kaam par jaana dharti ke ek bade haadse ke samaan kyon hai?</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title"><span class="hi">शब्द-संपदा</span><span class="en">Shabd-Sampada (Vocabulary)</span></h3>
+                <div class="shabdarth-grid">
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">कोहरा</span><span class="en">Kohra</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">धुंध</span><span class="en">Dhundh (Fog)</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">मदरसा</span><span class="en">Madarsa</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">विद्यालय / स्कूल</span><span class="en">Vidyalaya / School</span></span>
+                    </div>
+                    <div class="shabdarth-item">
+                        <span class="shabdarth-word"><span class="hi">हस्बमामूल</span><span class="en">Hasbamamool</span></span> - 
+                        <span class="shabdarth-mean"><span class="hi">यथावत / पहले जैसा</span><span class="en">Yathavat / Pahle jaisa (As usual)</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Language Toggle Logic
+        function toggleLanguage() {
+            const toggle = document.getElementById('langToggle');
+            if (toggle.checked) {
+                document.body.classList.add('show-hinglish');
+            } else {
+                document.body.classList.remove('show-hinglish');
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId, element) {
+            // Hide all contents
+            const contents = document.querySelectorAll('.chapter-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected content and activate tab
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
