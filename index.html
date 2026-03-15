@@ -76,6 +76,133 @@
             background-color: var(--accent-hover);
         }
 
+        .pdf-btn {
+            padding: 8px 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .pdf-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .audio-line {
+            transition: background-color 0.2s ease;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .audio-line:hover {
+            background-color: rgba(16, 163, 127, 0.06);
+        }
+
+        .audio-line.active {
+            background-color: rgba(16, 163, 127, 0.22);
+            box-shadow: inset 3px 0 0 var(--accent-color);
+        }
+
+        .audio-player-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ffffff;
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.06);
+            z-index: 1200;
+            padding: 10px 14px;
+        }
+
+        .audio-player-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px 14px;
+            align-items: center;
+        }
+
+        .audio-meta {
+            min-width: 0;
+        }
+
+        .audio-title {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .player-btn {
+            border: 1px solid var(--border-color);
+            background: #fff;
+            color: var(--text-primary);
+            border-radius: 999px;
+            padding: 6px 11px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .player-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .player-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .player-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 88px;
+            text-align: center;
+        }
+
+        .player-speed-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .player-speed {
+            width: 90px;
+        }
+
+        .player-seek {
+            grid-column: 1 / -1;
+            width: 100%;
+            accent-color: var(--accent-color);
+        }
+
         /* Toggle Switch */
         .toggle-container {
             display: flex;
@@ -181,7 +308,7 @@
         main {
             max-width: 800px;
             margin: 32px auto;
-            padding: 0 20px;
+            padding: 0 20px 120px;
             min-height: calc(100vh - 150px);
         }
 
@@ -252,6 +379,42 @@
             .chapter-title {
                 font-size: 1.5rem;
             }
+            .audio-player-inner {
+                grid-template-columns: 1fr;
+            }
+            .audio-controls {
+                justify-content: flex-start;
+            }
+        }
+
+        @media print {
+            header,
+            .tabs-container {
+                position: static;
+                border: none;
+                box-shadow: none;
+            }
+
+            .nav-button,
+            .toggle-container,
+            .pdf-btn {
+                display: none !important;
+            }
+
+            main {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+            }
+
+            .audio-player-bar {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -263,6 +426,8 @@
             HinglishWeb
         </div>
         <a href="module2hindi.html" class="nav-button">Go to Module 2</a>
+        <button class="pdf-btn" onclick="downloadPdfFor('hi')">Download Hindi PDF</button>
+        <button class="pdf-btn" onclick="downloadPdfFor('en')">Download Hinglish PDF</button>
         <div class="toggle-container">
             <span id="labelHi" class="active-label">Hindi</span>
             <label class="switch">
@@ -281,7 +446,31 @@
         <!-- Content will be injected here -->
     </main>
 
+    <div class="audio-player-bar">
+        <div class="audio-player-inner">
+            <div class="audio-meta">
+                <div class="audio-title" id="audioTitle">Narration Player</div>
+                <div class="audio-subtitle" id="audioSubtitle">Select a chapter to load narration.</div>
+            </div>
+            <div class="audio-controls">
+                <button class="player-btn" id="backwardBtn" type="button">-5s</button>
+                <button class="player-btn" id="playPauseBtn" type="button">Play</button>
+                <button class="player-btn" id="forwardBtn" type="button">+5s</button>
+                <div class="player-time" id="playerTime">00:00 / 00:00</div>
+                <div class="player-speed-wrap">
+                    <span>Speed</span>
+                    <input class="player-speed" id="speedSlider" type="range" min="0.5" max="3" step="0.1" value="1">
+                    <span id="speedValue">1x</span>
+                </div>
+            </div>
+            <input class="player-seek" id="seekBar" type="range" min="0" max="100" value="0" step="0.1">
+        </div>
+        <audio id="chapterAudio" preload="metadata"></audio>
+    </div>
+
     <script>
+        let activeChapterIndex = 0;
+
         // Data Structure & Content
         const db = [];
         function addChap(titleHi, titleEn) {
@@ -502,19 +691,36 @@
         const labelHi = document.getElementById('labelHi');
         const labelEn = document.getElementById('labelEn');
 
-        // Toggle Language
-        langToggle.addEventListener('change', (e) => {
-            if (e.target.checked) {
+        function applyLanguageState(isHinglish) {
+            if (isHinglish) {
                 document.body.classList.remove('show-hi');
                 document.body.classList.add('show-en');
                 labelEn.classList.add('active-label');
                 labelHi.classList.remove('active-label');
+                langToggle.checked = true;
             } else {
                 document.body.classList.remove('show-en');
                 document.body.classList.add('show-hi');
                 labelHi.classList.add('active-label');
                 labelEn.classList.remove('active-label');
+                langToggle.checked = false;
             }
+        }
+
+        function downloadPdfFor(lang) {
+            const wasHinglish = langToggle.checked;
+            const previousTitle = document.title;
+            applyLanguageState(lang === 'en');
+            document.title = lang === 'hi' ? 'Module 1 - Hindi' : 'Module 1 - Hinglish';
+            window.print();
+            document.title = previousTitle;
+            applyLanguageState(wasHinglish);
+        }
+
+        // Toggle Language
+        langToggle.addEventListener('change', (e) => {
+            applyLanguageState(e.target.checked);
+            highlightLineByProgress(false);
         });
 
         // Render Tabs
@@ -531,15 +737,16 @@
                 btn.onclick = () => {
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    renderContent(chap);
+                    renderContent(chap, index);
                 };
                 tabsBar.appendChild(btn);
             });
         }
 
         // Render Content
-        function renderContent(chap) {
+        function renderContent(chap, chapterIndex) {
             contentArea.innerHTML = '';
+            activeChapterIndex = chapterIndex;
             
             const titleEl = document.createElement('h1');
             titleEl.className = 'chapter-title';
@@ -550,18 +757,212 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <div class="lang-hi">${block.hi}</div>
-                    <div class="lang-en">${block.en}</div>
+                    <div class="lang-hi">${wrapLines(block.hi)}</div>
+                    <div class="lang-en">${wrapLines(block.en)}</div>
                 `;
                 contentArea.appendChild(card);
             });
             window.scrollTo(0, 0);
+            setupChapterAudio(chapterIndex, chap.titleHi);
+            resetLineHighlight();
         }
+
+        function wrapLines(text) {
+            const lines = text.split('\n');
+            return lines.map((line, idx) => {
+                if (line.trim() === '') {
+                    return '<br>';
+                }
+                return `<span class="audio-line" data-line="${idx}">${line}</span><br>`;
+            }).join('');
+        }
+
+        const chapterAudioMap = {
+            0: 'narration/1.1 गिनीज बुक मेरे नगर की full.mp3',
+            1: 'narration/1.2 वाणिज्य और विज्ञापन page 1.mp3',
+            2: 'narration/1.2 वाणिज्य और विज्ञापन full.mp3',
+            3: 'narration/1.3 युवा क्रांति के शोले full.mp3',
+            4: 'narration/1.4 yatra japan ki full.mp3',
+            5: null,
+            6: 'narration/1.6 महान विभूतियां full.wav'
+        };
+
+        const chapterAudio = document.getElementById('chapterAudio');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const backwardBtn = document.getElementById('backwardBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const seekBar = document.getElementById('seekBar');
+        const playerTime = document.getElementById('playerTime');
+        const audioTitle = document.getElementById('audioTitle');
+        const audioSubtitle = document.getElementById('audioSubtitle');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+
+        function getVisibleLines() {
+            const isHinglish = langToggle.checked;
+            const visibleContainers = document.querySelectorAll(isHinglish ? '.lang-en' : '.lang-hi');
+            const lines = [];
+            visibleContainers.forEach(container => {
+                const style = window.getComputedStyle(container);
+                if (style.display !== 'none') {
+                    lines.push(...container.querySelectorAll('.audio-line'));
+                }
+            });
+            return lines;
+        }
+
+        function resetLineHighlight() {
+            document.querySelectorAll('.audio-line.active').forEach((line) => line.classList.remove('active'));
+        }
+
+        function highlightLineByProgress(scrollToLine) {
+            const lines = getVisibleLines();
+            resetLineHighlight();
+
+            if (!lines.length || !chapterAudio.duration || Number.isNaN(chapterAudio.duration)) {
+                return;
+            }
+
+            const progress = chapterAudio.currentTime / chapterAudio.duration;
+            const lineIndex = Math.max(0, Math.min(lines.length - 1, Math.floor(progress * lines.length)));
+            const activeLine = lines[lineIndex];
+            activeLine.classList.add('active');
+
+            if (scrollToLine) {
+                activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function updateTimeAndSeek() {
+            const duration = chapterAudio.duration || 0;
+            const current = chapterAudio.currentTime || 0;
+            const progress = duration ? (current / duration) * 100 : 0;
+            seekBar.value = progress;
+            playerTime.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+        }
+
+        function formatTime(seconds) {
+            const safe = Number.isFinite(seconds) ? Math.floor(seconds) : 0;
+            const mm = String(Math.floor(safe / 60)).padStart(2, '0');
+            const ss = String(safe % 60).padStart(2, '0');
+            return `${mm}:${ss}`;
+        }
+
+        function setPlayerEnabled(enabled) {
+            playPauseBtn.disabled = !enabled;
+            backwardBtn.disabled = !enabled;
+            forwardBtn.disabled = !enabled;
+            seekBar.disabled = !enabled;
+        }
+
+        function setupChapterAudio(chapterIndex, chapterTitle) {
+            const src = chapterAudioMap[chapterIndex] || null;
+
+            chapterAudio.pause();
+            chapterAudio.currentTime = 0;
+            resetLineHighlight();
+            seekBar.value = 0;
+            playerTime.textContent = '00:00 / 00:00';
+            playPauseBtn.textContent = 'Play';
+
+            if (!src) {
+                chapterAudio.removeAttribute('src');
+                chapterAudio.load();
+                setPlayerEnabled(false);
+                audioTitle.textContent = `${chapterTitle}`;
+                audioSubtitle.textContent = 'No narration added for this chapter yet.';
+                return;
+            }
+
+            chapterAudio.src = encodeURI(src);
+            chapterAudio.playbackRate = Number(speedSlider.value);
+            setPlayerEnabled(true);
+            audioTitle.textContent = `${chapterTitle}`;
+            audioSubtitle.textContent = src;
+        }
+
+        playPauseBtn.addEventListener('click', async () => {
+            if (!chapterAudio.getAttribute('src')) {
+                return;
+            }
+            if (chapterAudio.paused) {
+                await chapterAudio.play();
+            } else {
+                chapterAudio.pause();
+            }
+        });
+
+        backwardBtn.addEventListener('click', () => {
+            chapterAudio.currentTime = Math.max(0, chapterAudio.currentTime - 5);
+            highlightLineByProgress(true);
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            const duration = chapterAudio.duration || 0;
+            chapterAudio.currentTime = Math.min(duration, chapterAudio.currentTime + 5);
+            highlightLineByProgress(true);
+        });
+
+        speedSlider.addEventListener('input', () => {
+            const speed = Number(speedSlider.value);
+            chapterAudio.playbackRate = speed;
+            speedValue.textContent = `${speed % 1 === 0 ? speed.toFixed(0) : speed.toFixed(1)}x`;
+        });
+
+        seekBar.addEventListener('input', () => {
+            if (!chapterAudio.duration || Number.isNaN(chapterAudio.duration)) {
+                return;
+            }
+            chapterAudio.currentTime = (Number(seekBar.value) / 100) * chapterAudio.duration;
+            highlightLineByProgress(false);
+            updateTimeAndSeek();
+        });
+
+        chapterAudio.addEventListener('loadedmetadata', () => {
+            updateTimeAndSeek();
+            highlightLineByProgress(false);
+        });
+
+        chapterAudio.addEventListener('timeupdate', () => {
+            updateTimeAndSeek();
+            highlightLineByProgress(false);
+        });
+
+        chapterAudio.addEventListener('play', () => {
+            playPauseBtn.textContent = 'Pause';
+        });
+
+        chapterAudio.addEventListener('pause', () => {
+            playPauseBtn.textContent = 'Play';
+        });
+
+        chapterAudio.addEventListener('ended', () => {
+            playPauseBtn.textContent = 'Play';
+            highlightLineByProgress(true);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('audio-line')) {
+                return;
+            }
+            if (!chapterAudio.duration || Number.isNaN(chapterAudio.duration)) {
+                return;
+            }
+            const lines = getVisibleLines();
+            const index = lines.findIndex((line) => line === e.target);
+            if (index === -1) {
+                return;
+            }
+            const targetTime = (index / Math.max(1, lines.length)) * chapterAudio.duration;
+            chapterAudio.currentTime = targetTime;
+            highlightLineByProgress(true);
+            updateTimeAndSeek();
+        });
 
         // Initialize
         renderTabs();
         if (db.length > 0) {
-            renderContent(db[0]);
+            renderContent(db[0], 0);
         }
     </script>
 </body>

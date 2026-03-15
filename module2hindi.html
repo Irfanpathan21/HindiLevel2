@@ -64,6 +64,22 @@
             background-color: #0e906f;
         }
 
+        .pdf-btn {
+            padding: 8px 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .pdf-btn:hover {
+            background-color: #0e906f;
+        }
+
         /* Toggle Switch */
         .toggle-container {
             display: flex;
@@ -265,6 +281,40 @@
         body.show-hinglish span.hi { display: none; }
         body.show-hinglish span.en { display: inline; }
 
+        @media print {
+            .nav-button,
+            .toggle-container,
+            .pdf-btn,
+            .tabs {
+                display: none !important;
+            }
+
+            .header {
+                position: static;
+                border: none;
+                padding: 0;
+            }
+
+            .content-container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .chapter-content {
+                display: none !important;
+            }
+
+            .chapter-content.active {
+                display: block !important;
+            }
+
+            .card {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -275,6 +325,8 @@
             <span class="en">Hindi Sahitya - Part 2</span>
         </h1>
         <a href="index.html" class="nav-button">Go to Module 1</a>
+        <button class="pdf-btn" onclick="downloadPdfVersion('hi')">Download Hindi PDF</button>
+        <button class="pdf-btn" onclick="downloadPdfVersion('en')">Download Hinglish PDF</button>
         <div class="toggle-container">
             <span class="hi">हिंदी</span><span class="en">Hindi</span>
             <label class="switch">
@@ -959,6 +1011,28 @@
     </main>
 
     <script>
+        function setLanguageMode(lang) {
+            const toggle = document.getElementById('langToggle');
+            const isHinglish = lang === 'en';
+            toggle.checked = isHinglish;
+            if (isHinglish) {
+                document.body.classList.add('show-hinglish');
+            } else {
+                document.body.classList.remove('show-hinglish');
+            }
+        }
+
+        function downloadPdfVersion(lang) {
+            const toggle = document.getElementById('langToggle');
+            const previousLang = toggle.checked ? 'en' : 'hi';
+            const previousTitle = document.title;
+            setLanguageMode(lang);
+            document.title = lang === 'hi' ? 'Module 2 - Hindi' : 'Module 2 - Hinglish';
+            window.print();
+            document.title = previousTitle;
+            setLanguageMode(previousLang);
+        }
+
         // Language Toggle Logic
         function toggleLanguage() {
             const toggle = document.getElementById('langToggle');
